@@ -1,6 +1,8 @@
 package org.example.products.data;
 
-public class Cashier {
+import java.io.Serializable;
+
+public class Cashier implements Serializable{
     private String name;
     private long id;
     private int salary;

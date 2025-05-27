@@ -1,8 +1,0 @@
-Receipt ID: 1
-Cashier: John
-Date: 2025-05-25T16:33:02.380746900
-Items:
-- lemon x2 = 42.00
-- Coconut x1 = 21.00
-- banana x2 = 48.00
-Total: 111.00

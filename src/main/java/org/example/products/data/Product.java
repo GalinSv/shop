@@ -1,9 +1,10 @@
 package org.example.products.data;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.EnumMap;
 
-public class Product {
+public class Product implements Serializable {
     private long id;
     private int quantity;
     private String name;
@@ -22,6 +23,7 @@ public class Product {
         this.typeProduct = typeProduct;
         this.expirationDate = expirationDate;
     }
+
     public double getSellPrice() {
         return sellPrice;
     }

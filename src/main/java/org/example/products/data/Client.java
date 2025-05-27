@@ -5,10 +5,15 @@ import java.util.Map;
 
 public class Client {
     private double money;
-    private Map<Product, Integer> cart = new HashMap<>();
+    private Map<Product, Integer> cart;
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
 
     public Client(double money) {
         this.money = money;
+        this.cart = new HashMap<>();
     }
 
     public void addToCart(Product product, int quantity) {

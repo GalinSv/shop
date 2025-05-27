@@ -1,8 +1,5 @@
 package org.example.products.data;
 
-import org.example.products.service.CashierService;
-import org.example.products.service.CashierServiceImpl;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -16,7 +13,6 @@ public class Receipt implements Serializable {
     private final Cashier cashier;
     private final LocalDateTime dateTime;
     private final Map<Product, Integer> items;
-    private final double total;
 
     public Receipt(Cashier cashier, Map<Product, Integer> items, double total) {
 
@@ -27,25 +23,38 @@ public class Receipt implements Serializable {
         this.total = total;
     }
 
-    public void printAndSave() throws IOException {
-
-        String filename = "receipt_" + id + ".txt";
-
-        try (PrintWriter writer = new PrintWriter(filename)) {
-
-            writer.println("Receipt ID: "+ id);
-            writer.println("Cashier: " +cashier.getName());
-            writer.println("Date: "+ dateTime);
-            writer.println("Items:");
-            for (var entry : items.entrySet()) {
-                writer.printf("- %s x%d = %.2f%n", entry.getKey().getName(),
-
-                        entry.getValue(),
-                        entry.getKey().getSellPrice() * entry.getValue());
-            }
-
-            writer.printf("Total: %.2f%n", total);
-        }
+    public int getId() {
+        return id;
     }
+
+    public Cashier getCashier() {
+        return cashier;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public Map<Product, Integer> getItems() {
+        return items;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    private final double total;
+
+    public static int getCounter() {
+        return counter;
+    }
+
+    public static void setCounter(int counter) {
+        Receipt.counter = counter;
+    }
+
+
+
+
 }
 

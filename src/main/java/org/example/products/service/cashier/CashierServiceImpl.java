@@ -1,6 +1,10 @@
-package org.example.products.service;
+package org.example.products.service.cashier;
 
 import org.example.products.data.*;
+import org.example.products.service.receipt.ReceiptService;
+import org.example.products.service.receipt.ReceiptServiceImpl;
+import org.example.products.service.shop.ShopService;
+import org.example.products.service.shop.ShopServiceImpl;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,9 +26,9 @@ public class CashierServiceImpl implements CashierService {
         double priceWithMarkup = deliveryPrice + (deliveryPrice * markupPercent / 100);
 
         long daysUntilExpiration = ChronoUnit.DAYS.between(today, product.getExpirationDate());
-        if (daysUntilExpiration < shop.getLowerPriceIfDaysUntilExpIsUnder()) {
+        if (daysUntilExpiration <shop.getLowerPriceIfDaysUntilExpIsUnder()) {
             double discount = shop.getPercentageIfCloserUntilExp();
-            priceWithMarkup *= (1 - discount / 100);
+            priceWithMarkup *= (1 - discount/ 100);
         }
 
 
@@ -32,10 +36,12 @@ public class CashierServiceImpl implements CashierService {
     }
 
     @Override
-    public void processPurchase(Client client, Shop shop, int cashierId, LocalDate today) {
+    public void processPurchase(Client client, Shop shop, Cashier cashier, LocalDate today) {
         Map<Product, Integer> cart = client.getCart();
         double total = 0;
-
+        if (cart == null || cart.isEmpty()) {
+            throw new RuntimeException("Client's cart is empty.");
+        }
         for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
             Product product = entry.getKey();
             int wantedQty = entry.getValue();
@@ -51,7 +57,8 @@ public class CashierServiceImpl implements CashierService {
             Product shopProduct = match.get();
 
             if (shopProduct.getQuantity() < wantedQty) {
-                throw new InsufficientQuantityException("Not enough " + shopProduct.getName() +
+
+                throw new IllegalArgumentException("Not enough " + shopProduct.getName() +
                         ": wanted " + wantedQty + ", available " + shopProduct.getQuantity());
             }
             CashierService cashierService = new CashierServiceImpl();
@@ -61,7 +68,7 @@ public class CashierServiceImpl implements CashierService {
         }
 
         if (client.getMoney() < total) {
-            throw new RuntimeException("Client doesn't have enough money. Needed: " + total);
+            throw new RuntimeException("Client doesn't have enough money. Needed: " + total + " and he has only " + client.getMoney());
         }
 
         for (Map.Entry<Product, Integer> entry : cart.entrySet()) {
@@ -75,9 +82,12 @@ public class CashierServiceImpl implements CashierService {
 
         client.deductMoney(total);
 
-        Receipt receipt = new Receipt(shop.getCheckout().get(cashierId), cart, total);
+        Receipt receipt = new Receipt(cashier, cart, total);
+        ReceiptService receiptService = new ReceiptServiceImpl();
+        ShopService shopService = new ShopServiceImpl();
+        shopService.addReceiptToShop(shop, receipt);
         try {
-            receipt.printAndSave();
+            receiptService.printAndSave(receipt);
         } catch (IOException e) {
             e.printStackTrace();
         }
