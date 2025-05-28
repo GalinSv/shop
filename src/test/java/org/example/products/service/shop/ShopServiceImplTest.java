@@ -1,17 +1,12 @@
 package org.example.products.service.shop;
 
-import org.example.products.data.Cashier;
-import org.example.products.data.Product;
-import org.example.products.data.Shop;
-import org.example.products.data.TypeProduct;
+import org.example.products.data.*;
+import org.example.products.service.cashier.CashierServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,20 +26,20 @@ class ShopServiceImplTest {
     }
 
     @Test
-    void testPutProductInShop_valid() {
+    void testPutProductInShopValid() {
         Product product = new Product(1, "Milk", 2.0,   TypeProduct.FOOD, LocalDate.of(2026,10,10),10);
         shopService.putProductInShop(shop, product);
         assertTrue(shop.getProduct().contains(product));
     }
 
     @Test
-    void testPutProductInShop_nullShop_throws() {
+    void testPutProductInShopNullShopThrows() {
         Product product = new Product(1, "Milk", 2.0, TypeProduct.FOOD, null,0);
         assertThrows(IllegalArgumentException.class, () -> shopService.putProductInShop(null, product));
     }
 
     @Test
-    void testPutProductInShop_nullProduct_throws() {
+    void testPutProductInShopNullProductThrows() {
         assertThrows(IllegalArgumentException.class, () -> shopService.putProductInShop(shop, null));
     }
     @Test
@@ -60,7 +55,87 @@ class ShopServiceImplTest {
         shop.getCheckout().put(1,c1);
         shop.getCheckout().put(2,c2);
         shopService.calculateCashierSalaries(shop);
-        assertEquals(1800.0, shopService.calculateCashierSalaries(shop), 0.001);
+        assertEquals(1800.0, shopService.calculateCashierSalaries(shop));
+    }
+    @Test
+    void testPutMarkUpInShopNullShopThrows() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(null, TypeProduct.FOOD, 10.0));
+    }
+
+    @Test
+    void testPutMarkUpInShopNullTypeProductThrows() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(shop, null, 10.0));
+    }
+
+    @Test
+    void testPutMarkUpInShopNegativePercentThrows() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(shop, TypeProduct.FOOD, -5.0));
+    }
+
+    @Test
+    void testLoweringThePriceIfCloseToExpirationValid() {
+        shopService.loweringThePriceIfCloseToExpiration(shop, 5, 20.0);
+        assertEquals(5, shop.getLowerPriceIfDaysUntilExpIsUnder());
+        assertEquals(20.0, shop.getPercentageIfCloserUntilExp());
+    }
+
+    @Test
+    void testLoweringThePriceIfCloseToExpirationNullShopThrows() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(null, 5, 20.0));
+    }
+
+    @Test
+    void testLoweringThePriceIfCloseToExpirationNegativeDaysThrows() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, -1, 20.0));
+    }
+
+    @Test
+    void testLoweringThePriceIfCloseToExpirationInvalidPercentageThrows() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, 5, -10.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, 5, 110.0));
+    }
+
+    @Test
+    void testAddReceiptToShopValid() {
+        Cashier cashier = new Cashier("John", 1, 1000);
+        Product product = new Product(1, "Milk", 2.0, TypeProduct.FOOD, LocalDate.of(2026, 10, 10), 10);
+        Receipt receipt = new Receipt(cashier, Map.of(product, 2), 4.0);
+
+        shopService.addReceiptToShop(shop, receipt);
+
+        assertTrue(shop.getIssuedReceipts().contains(receipt));
+        assertTrue(shop.getSoldProducts().contains(product));
+    }
+
+    @Test
+    void testAddReceiptToShopNullShopThrows() {
+        Cashier cashier = new Cashier("John", 1, 1000);
+        Product product = new Product(1, "Milk", 2.0, TypeProduct.FOOD, LocalDate.of(2026, 10, 10), 10);
+        Receipt receipt = new Receipt(cashier, Map.of(product, 2), 4.0);
+
+        assertThrows(IllegalArgumentException.class, () -> shopService.addReceiptToShop(null, receipt));
+    }
+
+    @Test
+    void testAddReceiptToShop_nullReceipt_throws() {
+        assertThrows(IllegalArgumentException.class, () -> shopService.addReceiptToShop(shop, null));
+    }
+
+    @Test
+    void testCalculateRevenue_valid() {
+        Cashier cashier = new Cashier("John", 1, 1000);
+        Receipt receipt1 = new Receipt(cashier, Map.of(), 100.0);
+        Receipt receipt2 = new Receipt(cashier, Map.of(), 200.0);
+
+        shop.getIssuedReceipts().add(receipt1);
+        shop.getIssuedReceipts().add(receipt2);
+
+        assertEquals(300.0, shopService.calculateRevenue(shop));
+    }
+
+    @Test
+    void testCalculateRevenue_emptyReceipts() {
+        assertEquals(0.0, shopService.calculateRevenue(shop));
     }
 
 

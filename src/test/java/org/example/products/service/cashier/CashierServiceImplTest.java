@@ -32,7 +32,7 @@ class CashierServiceImplTest {
         client = new Client( 1000);
         client.getCart().put(product, 2);
 
-        Cashier cashier = new Cashier("TestCashier", 1, 1200);
+        Cashier cashier = new Cashier("Ana", 1, 1200);
         shop.getCheckout().put(1,cashier);
 
         cashierService = new CashierServiceImpl();
@@ -56,7 +56,7 @@ void testProcessPurchaseInsufficientFunds() {
 
 @Test
 void testProcessPurchaseProductNotFound() {
-    Product nonExistentProduct = new Product(999, "NonExistent", 10, TypeProduct.FOOD, LocalDate.of(2026, 1, 1), 2);
+    Product nonExistentProduct = new Product(3, "none", 10, TypeProduct.FOOD, LocalDate.of(2026, 1, 1), 2);
     client.getCart().put(nonExistentProduct, 1);
     assertThrows(RuntimeException.class, () ->
             cashierService.processPurchase(client, shop, cashier, LocalDate.now()));

@@ -28,7 +28,6 @@ class ReceiptServiceImplTest {
     void setUp() {
         receiptService = new ReceiptServiceImpl();
 
-        // Create dummy data
         Product product = new Product(1, "Apple", 2.0,  TypeProduct.FOOD, LocalDate.now().plusDays(5),0);
         product.setSellPrice(2.5);
         Cashier cashier = new Cashier("John", 1, 1500);
@@ -41,7 +40,7 @@ class ReceiptServiceImplTest {
     }
 
     @Test
-    void testPrintAndSave_validReceipt_createsFiles() throws IOException {
+    void testPrintAndSaveValidReceiptCreatesFiles() throws IOException {
         receiptService.printAndSave(receipt);
 
         assertTrue(new File(txtFilename).exists(), "File created");
@@ -52,7 +51,7 @@ class ReceiptServiceImplTest {
     void testPrintAndSave_nullReceipt_throwsException() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> receiptService.printAndSave(null));
-        assertEquals("Cannot save a null receipt.", ex.getMessage());
+        assertEquals("Cannot save a null receipt", ex.getMessage());
     }
 
     @Test
