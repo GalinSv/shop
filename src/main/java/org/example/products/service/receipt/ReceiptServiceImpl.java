@@ -9,7 +9,7 @@ public class ReceiptServiceImpl implements  ReceiptService{
     @Override
     public void printAndSave(Receipt receipt) throws IOException{
         if (receipt == null) {
-            throw new IllegalArgumentException("Cannot save a null receipt.");
+            throw new IllegalArgumentException("Cannot save a null receipt");
         }
 
         String txtFilename = "receipt_" + receipt.getId() + ".txt";

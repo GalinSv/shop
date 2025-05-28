@@ -43,13 +43,13 @@ class CashierServiceImplTest {
 @Test
 void testProcessPurchaseSuccessful() {
     cashierService.processPurchase(client, shop, cashier, LocalDate.now());
-    assertEquals(978.0, client.getMoney(), 0.01);
+    assertEquals(978, client.getMoney());
     assertEquals(0, product.getQuantity());
 }
 
 @Test
 void testProcessPurchaseInsufficientFunds() {
-    client.setMoney(1.0);
+    client.setMoney(1);
     assertThrows(RuntimeException.class, () ->
             cashierService.processPurchase(client, shop, cashier, LocalDate.now()));
 }
@@ -73,7 +73,7 @@ void testCalculateSellingPriceWithDiscount() {
 void testCalculateSellingPriceWithoutDiscount() {
     product.setExpirationDate(LocalDate.now().plusDays(10));
     double price = cashierService.calculateSellingPrice(shop, product, LocalDate.now());
-    assertEquals(product.getDeliveryPrice() * 1.1, price, 0.01);
+    assertEquals(product.getDeliveryPrice() * 1.1, price);
 }
 @Test
     void testCalculateSellingPriceNormal() {

@@ -28,7 +28,7 @@ class ReceiptServiceImplTest {
     void setUp() {
         receiptService = new ReceiptServiceImpl();
 
-        Product product = new Product(1, "Apple", 2.0,  TypeProduct.FOOD, LocalDate.now().plusDays(5),0);
+        Product product = new Product(1, "Apple", 2,  TypeProduct.FOOD, LocalDate.now().plusDays(5),0);
         product.setSellPrice(2.5);
         Cashier cashier = new Cashier("John", 1, 1500);
         Map<Product, Integer> cart = new HashMap<>();
@@ -48,7 +48,7 @@ class ReceiptServiceImplTest {
     }
 
     @Test
-    void testPrintAndSave_nullReceipt_throwsException() {
+    void testPrintAndSaveNullReceiptThrowsException() {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
                 () -> receiptService.printAndSave(null));
         assertEquals("Cannot save a null receipt", ex.getMessage());

@@ -1,0 +1,6 @@
+Receipt ID: 1
+Cashier: Pesho
+Date: 2025-05-28T12:25:11.246108600
+Items:
+- Milk x2 = 22.00
+Total: 22.00

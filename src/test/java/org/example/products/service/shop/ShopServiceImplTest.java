@@ -27,14 +27,14 @@ class ShopServiceImplTest {
 
     @Test
     void testPutProductInShopValid() {
-        Product product = new Product(1, "Milk", 2.0,   TypeProduct.FOOD, LocalDate.of(2026,10,10),10);
+        Product product = new Product(1, "Milk", 2,   TypeProduct.FOOD, LocalDate.of(2026,10,10),10);
         shopService.putProductInShop(shop, product);
         assertTrue(shop.getProduct().contains(product));
     }
 
     @Test
     void testPutProductInShopNullShopThrows() {
-        Product product = new Product(1, "Milk", 2.0, TypeProduct.FOOD, null,0);
+        Product product = new Product(1, "Milk", 2, TypeProduct.FOOD, null,0);
         assertThrows(IllegalArgumentException.class, () -> shopService.putProductInShop(null, product));
     }
 
@@ -44,8 +44,8 @@ class ShopServiceImplTest {
     }
     @Test
     void testPutMarkUpInShop() {
-        shopService.putMarkUpInShop(shop, TypeProduct.FOOD, 10.0);
-        assertEquals(10.0, shop.getPercentMarkupByType().get(TypeProduct.FOOD));
+        shopService.putMarkUpInShop(shop, TypeProduct.FOOD, 10);
+        assertEquals(10, shop.getPercentMarkupByType().get(TypeProduct.FOOD));
     }
 
     @Test
@@ -55,44 +55,44 @@ class ShopServiceImplTest {
         shop.getCheckout().put(1,c1);
         shop.getCheckout().put(2,c2);
         shopService.calculateCashierSalaries(shop);
-        assertEquals(1800.0, shopService.calculateCashierSalaries(shop));
+        assertEquals(1800, shopService.calculateCashierSalaries(shop));
     }
     @Test
     void testPutMarkUpInShopNullShopThrows() {
-        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(null, TypeProduct.FOOD, 10.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(null, TypeProduct.FOOD, 10));
     }
 
     @Test
     void testPutMarkUpInShopNullTypeProductThrows() {
-        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(shop, null, 10.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(shop, null, 10));
     }
 
     @Test
     void testPutMarkUpInShopNegativePercentThrows() {
-        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(shop, TypeProduct.FOOD, -5.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.putMarkUpInShop(shop, TypeProduct.FOOD, -5));
     }
 
     @Test
     void testLoweringThePriceIfCloseToExpirationValid() {
-        shopService.loweringThePriceIfCloseToExpiration(shop, 5, 20.0);
+        shopService.loweringThePriceIfCloseToExpiration(shop, 5, 20);
         assertEquals(5, shop.getLowerPriceIfDaysUntilExpIsUnder());
         assertEquals(20.0, shop.getPercentageIfCloserUntilExp());
     }
 
     @Test
     void testLoweringThePriceIfCloseToExpirationNullShopThrows() {
-        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(null, 5, 20.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(null, 5, 20));
     }
 
     @Test
     void testLoweringThePriceIfCloseToExpirationNegativeDaysThrows() {
-        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, -1, 20.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, -1, 20));
     }
 
     @Test
     void testLoweringThePriceIfCloseToExpirationInvalidPercentageThrows() {
-        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, 5, -10.0));
-        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, 5, 110.0));
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, 5, -10));
+        assertThrows(IllegalArgumentException.class, () -> shopService.loweringThePriceIfCloseToExpiration(shop, 5, 110));
     }
 
     @Test
@@ -111,31 +111,31 @@ class ShopServiceImplTest {
     void testAddReceiptToShopNullShopThrows() {
         Cashier cashier = new Cashier("John", 1, 1000);
         Product product = new Product(1, "Milk", 2.0, TypeProduct.FOOD, LocalDate.of(2026, 10, 10), 10);
-        Receipt receipt = new Receipt(cashier, Map.of(product, 2), 4.0);
+        Receipt receipt = new Receipt(cashier, Map.of(product, 2), 4);
 
         assertThrows(IllegalArgumentException.class, () -> shopService.addReceiptToShop(null, receipt));
     }
 
     @Test
-    void testAddReceiptToShop_nullReceipt_throws() {
+    void testAddReceiptToShopNullReceiptThrows() {
         assertThrows(IllegalArgumentException.class, () -> shopService.addReceiptToShop(shop, null));
     }
 
     @Test
-    void testCalculateRevenue_valid() {
+    void testCalculateRevenueValid() {
         Cashier cashier = new Cashier("John", 1, 1000);
-        Receipt receipt1 = new Receipt(cashier, Map.of(), 100.0);
-        Receipt receipt2 = new Receipt(cashier, Map.of(), 200.0);
+        Receipt receipt1 = new Receipt(cashier, Map.of(), 100);
+        Receipt receipt2 = new Receipt(cashier, Map.of(), 200);
 
         shop.getIssuedReceipts().add(receipt1);
         shop.getIssuedReceipts().add(receipt2);
 
-        assertEquals(300.0, shopService.calculateRevenue(shop));
+        assertEquals(300, shopService.calculateRevenue(shop));
     }
 
     @Test
-    void testCalculateRevenue_emptyReceipts() {
-        assertEquals(0.0, shopService.calculateRevenue(shop));
+    void testCalculateRevenueEmptyReceipts() {
+        assertEquals(0, shopService.calculateRevenue(shop));
     }
 
 
